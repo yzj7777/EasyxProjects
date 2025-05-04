@@ -32,6 +32,19 @@ void UpdateBullets(std::vector<Bullet>& bullet_list, const Player& player)
     }
 }
 
+// 绘制玩家得分
+void DrawPlayerScore(int score)
+{
+    static TCHAR text[64];
+    _stprintf_s(text, _T("points：%d"), score);
+
+    setbkmode(TRANSPARENT);
+    settextcolor(RGB(255, 85, 185));
+    outtextxy(10, 10, text);
+}
+
+
+
 int main()
 {
     // 初始化图形窗口，设置大小为1280x720
@@ -46,6 +59,8 @@ int main()
     // 加载背景图像
     IMAGE img_background;
     loadimage(&img_background, _T("res/img/background.png"));
+
+    int score  = 0;
 
     // 创建玩家对象并初始化
     Player player(500, 500);  // 在坐标(500,500)创建玩家
@@ -91,9 +106,36 @@ int main()
         {
             if (enemy->CheckPlayerCollision(player))
             {
-                MessageBox(GetHWnd(), _T("You lost"), _T("Game end"), MB_OK);
+                static TCHAR text[128];
+                _stprintf_s(text, _T("points：%d"), score);
+                MessageBox(GetHWnd(), text, _T("game end"), MB_OK);
                 running = false;
                 break;
+            }
+        }
+
+        // 检测子弹和敌人的碰撞
+        for (Enemy* enemy : enemy_list)
+        {
+            for (const Bullet& bullet : bullet_list)
+            {
+                if (enemy->CheckBulletCollision(bullet))
+                {
+                    enemy->Hurt();
+                    score ++;
+                }
+            }
+        }
+
+        // 移除生命值归零的敌人
+        for (size_t i = 0; i < enemy_list.size(); i++)
+        {
+            Enemy* enemy = enemy_list[i];
+            if (!enemy->CheckAlive())
+            {
+                std::swap(enemy_list[i], enemy_list.back());
+                enemy_list.pop_back();
+                delete enemy;
             }
         }
 
@@ -109,6 +151,7 @@ int main()
             enemy->Draw(1000/144);
         for (const Bullet& bullet : bullet_list)
             bullet.Draw();
+            DrawPlayerScore(score);
 
         // 将缓冲区内容刷新到屏幕
         FlushBatchDraw();
@@ -123,6 +166,8 @@ int main()
             Sleep(1000 / 144 - delta_time);
         }
     }
+
+
 
     // 结束批量绘制
     EndBatchDraw();

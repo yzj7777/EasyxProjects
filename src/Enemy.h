@@ -51,6 +51,12 @@ public:
      */
     void Draw(int delta);
 
+    void Hurt(){alive = false; }
+
+    bool CheckAlive() {
+        return alive;
+    }
+
 private:
     const int SPEED = 2;               // 敌人移动速度
     const int FRAME_WIDTH = 80;        // 敌人宽度
@@ -65,5 +71,7 @@ private:
 
     const int WIN_WIDTH = 1280;        // 窗口宽度
     const int WIN_HEIGHT = 720;        // 窗口高度
+
+    bool alive = true;
 };
 
