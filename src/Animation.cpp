@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include <string>
 
 inline void putimage_alpha(int x, int y, IMAGE* img)
 {
@@ -6,6 +7,18 @@ inline void putimage_alpha(int x, int y, IMAGE* img)
     int h = img->getheight();
     AlphaBlend(GetImageHDC(NULL), x, y, w, h,
         GetImageHDC(img), 0, 0, w, h, { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA });
+}
+
+Animation::Animation(LPCTSTR path, int num, int interval)
+    : interval_ms(interval)
+{
+    for (int i = 0; i < num; i++)
+    {
+        IMAGE* img = new IMAGE();
+        std::wstring full_path = path + std::to_wstring(i) + L".png";
+        loadimage(img, full_path.c_str());
+        frame_list.push_back(img);
+    }
 }
 
 Animation::~Animation()

@@ -3,28 +3,17 @@
 #include <string>
 #include <windows.h> // for AlphaBlend
 
-#pragma comment(lib, "MSIMG32.LIB")
-
 Player::Player(int x, int y)
-    : pos{ x, y }, idx_current_anim(0)
+    : pos{ x, y }, facing_left(true), last_update_time(0)
 {
+    anim_left = nullptr;
+    anim_right = nullptr;
 }
 
 void Player::LoadAnimation()
 {
-    for (size_t i = 0; i < PLAYER_ANIM_NUM; i++)
-    {
-        std::wstring path = L"res/img/player_left_"
-            + std::to_wstring(i) + L".png";
-        loadimage(&img_player_left[i], path.c_str());
-    }
-
-    for (size_t i = 0; i < PLAYER_ANIM_NUM; i++)
-    {
-        std::wstring path = L"res/img/player_right_"
-            + std::to_wstring(i) + L".png";
-        loadimage(&img_player_right[i], path.c_str());
-    }
+    anim_left = new Animation(L"res/img/player_left_", PLAYER_ANIM_NUM, ANIM_INTERVAL);
+    anim_right = new Animation(L"res/img/player_right_", PLAYER_ANIM_NUM, ANIM_INTERVAL);
 }
 
 void Player::OnKeyDown(int vkcode)
@@ -42,10 +31,12 @@ void Player::OnKeyDown(int vkcode)
     case 'A':
     case 'a':
         is_move_left = true;
+        facing_left = true;
         break;
     case 'D':
     case 'd':
         is_move_right = true;
+        facing_left = false;
         break;
     }
 }
@@ -75,13 +66,9 @@ void Player::OnKeyUp(int vkcode)
 
 void Player::Update()
 {
-    static int counter = 0;
-
-    if (++counter % 5 == 0)
-    {
-        idx_current_anim++;
-        idx_current_anim %= PLAYER_ANIM_NUM;
-    }
+    DWORD current_time = GetTickCount();
+    DWORD delta_time = current_time - last_update_time;
+    last_update_time = current_time;
 
     if (is_move_up)    pos.y -= PLAYER_SPEED;
     if (is_move_down)  pos.y += PLAYER_SPEED;
@@ -91,19 +78,15 @@ void Player::Update()
 
 void Player::Draw()
 {
-    putimage_alpha(pos.x, pos.y, &img_player_left[idx_current_anim]);
+    DWORD delta_time = GetTickCount() - last_update_time;
+    
+    if (facing_left)
+        anim_left->Play(pos.x, pos.y, delta_time);
+    else
+        anim_right->Play(pos.x, pos.y, delta_time);
 }
 
 POINT Player::GetPosition() const
 {
     return pos;
-}
-
-void Player::putimage_alpha(int x, int y, IMAGE* img)
-{
-    int w = img->getwidth();
-    int h = img->getheight();
-    BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-    AlphaBlend(GetImageHDC(NULL), x, y, w, h,
-        GetImageHDC(img), 0, 0, w, h, blend);
 }

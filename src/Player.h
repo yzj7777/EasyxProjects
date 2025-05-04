@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics.h>
+#include "Animation.h"
 
 class Player {
 public:
@@ -26,19 +27,18 @@ public:
 
 private:
     POINT pos;                  // 玩家坐标
-    int idx_current_anim;       // 当前动画帧索引
     static const int PLAYER_ANIM_NUM = 6;
     static const int PLAYER_SPEED = 5;
+    static const int ANIM_INTERVAL = 100;  // 动画间隔时间(毫秒)
 
-    IMAGE img_player_left[PLAYER_ANIM_NUM];   // 左边动画帧
-    IMAGE img_player_right[PLAYER_ANIM_NUM];  // 右边动画帧
+    Animation* anim_left;       // 左侧动画
+    Animation* anim_right;      // 右侧动画
+    bool facing_left;           // 朝向标志
 
     bool is_move_up = false;
     bool is_move_down = false;
     bool is_move_left = false;
     bool is_move_right = false;
 
-    // 辅助函数：绘制带透明通道的图像
-    void putimage_alpha(int x, int y, IMAGE* img);
-
+    DWORD last_update_time;     // 上次更新时间
 };
