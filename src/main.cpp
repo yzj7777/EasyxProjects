@@ -36,7 +36,7 @@ void UpdateBullets(std::vector<Bullet>& bullet_list, const Player& player)
 void DrawPlayerScore(int score)
 {
     static TCHAR text[64];
-    _stprintf_s(text, _T("points：%d"), score);
+    _stprintf_s(text, _T("%d"), score);
 
     setbkmode(TRANSPARENT);
     settextcolor(RGB(255, 85, 185));
@@ -107,7 +107,7 @@ int main()
             if (enemy->CheckPlayerCollision(player))
             {
                 static TCHAR text[128];
-                _stprintf_s(text, _T("points：%d"), score);
+                _stprintf_s(text, _T("%d"), score);
                 MessageBox(GetHWnd(), text, _T("game end"), MB_OK);
                 running = false;
                 break;
