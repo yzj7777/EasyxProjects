@@ -40,4 +40,5 @@ private:
 
     // 辅助函数：绘制带透明通道的图像
     void putimage_alpha(int x, int y, IMAGE* img);
+
 };

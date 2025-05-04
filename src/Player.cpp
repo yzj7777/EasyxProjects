@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Animation.h"
 #include <string>
 #include <windows.h> // for AlphaBlend
 
