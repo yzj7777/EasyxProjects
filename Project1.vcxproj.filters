@@ -18,12 +18,18 @@
     <ClInclude Include="src\Player.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Player.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
