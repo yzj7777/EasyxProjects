@@ -70,7 +70,11 @@ private:
     DWORD last_update_time;     // 上次更新时间
 
     IMAGE img_shadow;           // 阴影图像
+
+    public:
     const int PLAYER_WIDTH = 80; // 玩家宽度
     const int PLAYER_HEIGHT = 80; // 玩家高度
     const int SHADOW_WIDTH = 32; // 阴影宽度
+    const int WIN_WIDTH = 1280;
+    const int WIN_HEIGHT = 720;
 };

@@ -122,8 +122,8 @@ void Player::Draw()
 
     if (pos.x < 0) pos.x = 0;
     if (pos.y < 0) pos.y = 0;
-    if (pos.x + PLAYER_WIDTH > 1280) pos.x = 1280 - PLAYER_WIDTH;
-    if (pos.y + PLAYER_HEIGHT > 720) pos.y = 720 - PLAYER_HEIGHT;
+    if (pos.x + PLAYER_WIDTH > WIN_WIDTH) pos.x = WIN_WIDTH - PLAYER_WIDTH;
+    if (pos.y + PLAYER_HEIGHT > WIN_HEIGHT) pos.y = WIN_HEIGHT - PLAYER_HEIGHT;
     
     // 根据朝向选择并播放相应的动画
     if (facing_left)
