@@ -1,5 +1,8 @@
 #include "GameManager.h"
 #include <cmath>
+#include <mmsystem.h>    // 添加这行，用于mciSendString
+#pragma comment(lib, "MSIMG32.LIB")
+#pragma comment(lib, "winmm.lib")  // 添加这行，链接Windows多媒体库
 
 // 初始化静态成员变量
 int GameManager::enemy_spawn_counter = 0;
@@ -42,6 +45,10 @@ void GameManager::Initialize()
     
     // 加载背景图像
     loadimage(&img_background, _T("res/img/background.png"));
+
+    mciSendString(_T("open res/mus/bgm.mp3 alias bgm"), NULL, 0, NULL);
+    mciSendString(_T("open res/mus/hit.wav alias hit"), NULL, 0, NULL);
+    mciSendString(_T("play bgm repeat from 0"), NULL, 0, NULL);
 
     // 创建玩家对象并初始化
     player = new Player(500, 500);
@@ -211,6 +218,7 @@ void GameManager::CheckCollisions()
     for (Enemy* enemy : enemy_list) {
         for (const Bullet& bullet : bullet_list) {
             if (enemy->CheckBulletCollision(bullet)) {
+                mciSendString(_T("play hit from 0"), NULL, 0, NULL);
                 enemy->Hurt();
                 score++;
             }

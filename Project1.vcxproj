@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Button.h" />
     <ClInclude Include="src\Animation.h" />
     <ClInclude Include="src\Bullet.h" />
     <ClInclude Include="src\Character.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="src\Player.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\Character.cpp" />

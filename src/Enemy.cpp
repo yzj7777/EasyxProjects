@@ -4,6 +4,7 @@
 #include <cstdlib>  // for rand()
 #include <ctime>    // for time()
 
+
 /** 
  * @brief Enemy类构造函数
  * 初始化敌人的位置和动画
