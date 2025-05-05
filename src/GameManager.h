@@ -4,7 +4,11 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Bullet.h"
+#include "Button.h"
 
+// 声明外部变量，供Button类使用
+extern bool is_game_started;
+extern bool running;
 
 /**
  * @class GameManager
@@ -75,15 +79,19 @@ private:
 private:
     // 游戏状态
     bool running;
+    bool is_game_started;  // 添加游戏开始标志
     int score;
 
     // 游戏对象
     Player* player;
     std::vector<Enemy*> enemy_list;
     std::vector<Bullet> bullet_list;
+    StartGameButton* btn_start_game;  // 添加开始游戏按钮
+    QuitGameButton* btn_quit_game;    // 添加退出游戏按钮
 
     // 资源
     IMAGE img_background;
+    IMAGE img_menu;
 
     // 消息结构体
     ExMessage msg;
@@ -93,4 +101,8 @@ private:
     const int WIN_HEIGHT = 720;
     const int ENEMY_SPAWN_INTERVAL = 100;
     static int enemy_spawn_counter;
+    const int BUTTON_WIDTH = 192;
+    const int BUTTON_HEIGHT = 75;
+
+
 };

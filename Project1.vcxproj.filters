@@ -33,7 +33,7 @@
     <ClInclude Include="src\GameManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
+    <ClInclude Include="src\Button.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -59,7 +59,7 @@
     <ClCompile Include="src\GameManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
+    <ClCompile Include="src\Button.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

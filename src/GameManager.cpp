@@ -7,11 +7,16 @@
 // 初始化静态成员变量
 int GameManager::enemy_spawn_counter = 0;
 
+// 定义外部变量，供Button类使用
+bool is_game_started = false;
+bool running = false;
+
 /**
  * @brief GameManager构造函数
  */
 GameManager::GameManager()
-    : running(false), score(0), player(nullptr)
+    : running(false), is_game_started(false), score(0), player(nullptr),
+    btn_start_game(nullptr), btn_quit_game(nullptr)
 {
 }
 
@@ -32,6 +37,16 @@ GameManager::~GameManager()
         delete enemy;
     }
     enemy_list.clear();
+
+    // 释放按钮资源
+    if (btn_start_game != nullptr) {
+        delete btn_start_game;
+        btn_start_game = nullptr;
+    }
+    if (btn_quit_game != nullptr) {
+        delete btn_quit_game;
+        btn_quit_game = nullptr;
+    }
 }
 
 /**
@@ -44,11 +59,30 @@ void GameManager::Initialize()
     initgraph(WIN_WIDTH, WIN_HEIGHT);
     
     // 加载背景图像
+    loadimage(&img_menu, _T("res/img/menu.png"));
     loadimage(&img_background, _T("res/img/background.png"));
 
     mciSendString(_T("open res/mus/bgm.mp3 alias bgm"), NULL, 0, NULL);
     mciSendString(_T("open res/mus/hit.wav alias hit"), NULL, 0, NULL);
     mciSendString(_T("play bgm repeat from 0"), NULL, 0, NULL);
+
+    RECT region_btn_start_game, region_btn_quit_game;
+
+    region_btn_start_game.left = (WIN_WIDTH - BUTTON_WIDTH) / 2;
+    region_btn_start_game.right = region_btn_start_game.left + BUTTON_WIDTH;
+    region_btn_start_game.top = 430;
+    region_btn_start_game.bottom = region_btn_start_game.top + BUTTON_HEIGHT;
+
+    region_btn_quit_game.left = (WIN_WIDTH - BUTTON_WIDTH) / 2;
+    region_btn_quit_game.right = region_btn_quit_game.left + BUTTON_WIDTH;
+    region_btn_quit_game.top = 550;
+    region_btn_quit_game.bottom = region_btn_quit_game.top + BUTTON_HEIGHT;
+
+    // 创建按钮对象
+    btn_start_game = new StartGameButton(region_btn_start_game,
+        _T("res/img/ui_start_idle.png"), _T("res/img/ui_start_hovered.png"), _T("res/img/ui_start_pushed.png"));
+    btn_quit_game = new QuitGameButton(region_btn_quit_game,
+        _T("res/img/ui_quit_idle.png"), _T("res/img/ui_quit_hovered.png"), _T("res/img/ui_quit_pushed.png"));
 
     // 创建玩家对象并初始化
     player = new Player(500, 500);
@@ -58,7 +92,10 @@ void GameManager::Initialize()
     bullet_list.resize(3);
 
     // 初始化游戏状态
-    running = true;
+    ::running = true;  // 使用全局变量
+    ::is_game_started = false;  // 使用全局变量
+    running = true;  // 类成员变量
+    is_game_started = false;  // 类成员变量
     score = 0;
 
     // 开始批量绘制，提高绘图效率
@@ -71,7 +108,7 @@ void GameManager::Initialize()
  */
 void GameManager::Run()
 {
-    while (running) {
+    while (running && ::running) {  // 检查类成员变量和全局变量
         // 记录当前帧开始时间
         DWORD start_time = GetTickCount();
 
@@ -108,13 +145,23 @@ void GameManager::HandleInput()
 {
     // 处理所有待处理的消息
     while (peekmessage(&msg)) {
-        // 处理按键按下事件
-        if (msg.message == WM_KEYDOWN) {
-            player->OnKeyDown(msg.vkcode);
-        }
-        // 处理按键释放事件
-        else if (msg.message == WM_KEYUP) {
-            player->OnKeyUp(msg.vkcode);
+        if (!is_game_started) {
+            // 在游戏未开始时处理按钮消息
+            btn_start_game->ProcessEvent(msg);
+            btn_quit_game->ProcessEvent(msg);
+            
+            // 检查全局变量是否被按钮更改
+            if (::is_game_started) {
+                is_game_started = true;  // 更新类成员变量
+            }
+        } else {
+            // 游戏开始后处理玩家输入
+            if (msg.message == WM_KEYDOWN) {
+                player->OnKeyDown(msg.vkcode);
+            }
+            else if (msg.message == WM_KEYUP) {
+                player->OnKeyUp(msg.vkcode);
+            }
         }
     }
 }
@@ -124,6 +171,11 @@ void GameManager::HandleInput()
  */
 void GameManager::Update()
 {
+    if (!is_game_started) {
+        // 游戏未开始时，不更新游戏逻辑
+        return;
+    }
+
     // 更新玩家状态
     player->Update();
     
@@ -147,25 +199,26 @@ void GameManager::Update()
  */
 void GameManager::Render()
 {
-    // 清空屏幕准备绘制新帧
     cleardevice();
     
-    // 绘制背景
-    putimage(0, 0, &img_background);
-    
-    // 绘制游戏对象
-    player->Draw();
-    for (Enemy* enemy : enemy_list) {
-        enemy->Draw(1000/144);
+    if (!is_game_started) {
+        // 绘制菜单界面
+        putimage(0, 0, &img_menu);
+        btn_start_game->Draw();
+        btn_quit_game->Draw();
+    } else {
+        // 绘制游戏界面
+        putimage(0, 0, &img_background);
+        player->Draw();
+        for (Enemy* enemy : enemy_list) {
+            enemy->Draw(1000/144);
+        }
+        for (const Bullet& bullet : bullet_list) {
+            bullet.Draw();
+        }
+        DrawPlayerScore();
     }
-    for (const Bullet& bullet : bullet_list) {
-        bullet.Draw();
-    }
     
-    // 绘制玩家得分
-    DrawPlayerScore();
-
-    // 将缓冲区内容刷新到屏幕
     FlushBatchDraw();
 }
 
