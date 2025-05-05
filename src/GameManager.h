@@ -40,6 +40,12 @@ public:
      */
     void Run();
 
+    /**
+     * @brief 获取玩家得分
+     * @return 玩家当前得分
+     */
+    int GetScore() const; // 修改这里：将 Getscore 改为 GetScore
+
 private:
     /**
      * @brief 处理用户输入

@@ -302,3 +302,12 @@ void GameManager::DrawPlayerScore()
     settextcolor(RGB(255, 85, 185));
     outtextxy(10, 10, text);
 }
+
+/**
+ * @brief 获取玩家得分
+ * @return 玩家当前得分
+ */
+int GameManager::GetScore() const
+{
+    return score;
+}
