@@ -2,7 +2,9 @@
 #include "Player.h"
 #include <graphics.h>
 #include <cstdlib>  // for rand()
-#include <ctime>    // for time()
+#include <cstdlib> // for rand() and srand()
+#include <ctime>   // for time()
+
 
 
 /** 
@@ -12,6 +14,7 @@
 Enemy::Enemy() 
     : Character(0, 0)  // 临时初始位置，将在构造函数中重新设置
 {
+    SPEED = rand() % 3 + 2;
     // 敌人生成边界枚举
     enum class SpawnEdge
     {

@@ -77,7 +77,7 @@ public:
     }
 
 private:
-    const int SPEED = 3;               // 敌人移动速度
+    int SPEED ;               // 敌人移动速度
     const int FRAME_WIDTH = 80;        // 敌人宽度
     const int FRAME_HEIGHT = 80;       // 敌人高度
     const int SHADOW_WIDTH = 48;       // 阴影宽度
