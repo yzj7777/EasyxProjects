@@ -24,86 +24,24 @@ private:
     IMAGE img_pushed;         // 按下状态图片
     Status status = Status::Idle;  // 当前按钮状态
 
-
 public:
-    // 构造函数
-    // 参数 rect：按钮区域矩形
-    // 参数 path_img_idle：默认状态图片路径
-    // 参数 path_img_hovered：悬停状态图片路径
-    // 参数 path_img_pushed：按下状态图片路径
-    Button(RECT rect, LPCTSTR path_img_idle, LPCTSTR path_img_hovered, LPCTSTR path_img_pushed)
-    {
-        region = rect;
+    // 构造函数声明
+    Button(RECT rect, LPCTSTR path_img_idle, LPCTSTR path_img_hovered, LPCTSTR path_img_pushed);
 
-        // 加载各状态图片资源
-        loadimage(&img_idle, path_img_idle);
-        loadimage(&img_hovered, path_img_hovered);
-        loadimage(&img_pushed, path_img_pushed);
-    }
+    // 默认析构函数
+    virtual ~Button() = default;
 
-    ~Button() = default;  // 默认析构函数
+    // 绘制按钮声明
+    void Draw();
 
-    // 绘制按钮（根据当前状态显示对应图片）
-    void Draw()
-    {
-        switch (status)
-        {
-        case Status::Idle:
-            putimage(region.left, region.top, &img_idle);
-            break;
-        case Status::Hovered:
-            putimage(region.left, region.top, &img_hovered);
-            break;
-        case Status::Pushed:
-            putimage(region.left, region.top, &img_pushed);
-            break;
-        }
-    }
+    // 检测鼠标坐标是否在按钮区域内声明
+    bool CheckCursorHit(int x, int y);
 
-    // 检测鼠标坐标是否在按钮区域内
-// 参数 x,y：鼠标绝对坐标
-// 返回值：true表示在区域内
-    bool CheckCursorHit(int x, int y)
-    {
-        return x >= region.left && x <= region.right &&
-            y >= region.top && y <= region.bottom;
-    }
-
-    // 消息事件处理器
-    // 参数 msg：消息结构体
-    void ProcessEvent(const ExMessage& msg)
-    {
-        switch (msg.message)
-        {
-        case WM_MOUSEMOVE:
-            // 鼠标移动时更新悬停状态
-            if (status == Status::Idle && CheckCursorHit(msg.x, msg.y))
-                status = Status::Hovered;
-            else if (status == Status::Hovered && !CheckCursorHit(msg.x, msg.y))
-                status = Status::Idle;
-            break;
-
-        case WM_LBUTTONDOWN:
-            // 左键按下时进入按下状态
-            if (CheckCursorHit(msg.x, msg.y))
-                status = Status::Pushed;
-            break;
-
-        case WM_LBUTTONUP:
-            // 左键释放时触发点击事件
-            if (status == Status::Pushed) {
-                status = Status::Hovered;  // 重置按钮状态为悬停
-                OnClick();  // 执行子类实现的点击逻辑
-            }
-            break;
-
-        default:
-            break;
-        }
-    }
+    // 消息事件处理器声明
+    void ProcessEvent(const ExMessage& msg);
 };
 
-// 开始游戏按钮
+// 开始游戏按钮 (保持在 .h 文件中，因为实现简单且依赖 extern 变量)
 class StartGameButton : public Button
 {
 public:
@@ -115,12 +53,12 @@ public:
 protected:
     void OnClick() override
     {
-        extern bool is_game_started;
-        is_game_started = true;
+        extern bool is_game_started;  // 声明外部变量
+        is_game_started = true;       // 设置游戏开始标志
     }
-};  // 添加分号
+};
 
-// 退出游戏按钮
+// 退出游戏按钮 (保持在 .h 文件中，原因同上)
 class QuitGameButton : public Button
 {
 public:
@@ -135,4 +73,4 @@ protected:
         extern bool running;
         running = false;
     }
-};  // 添加分号
+};
