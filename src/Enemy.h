@@ -1,17 +1,16 @@
 #pragma once
-#include <windows.h> // for POINT
 #include <cmath>     // for sqrt
-#include "Animation.h" 
+#include "Character.h"
 #include "Player.h"
 #include "Bullet.h"
 
 /**
  * @class Enemy
- * @brief 敌人类，管理敌人的状态、动画和行为
+ * @brief 敌人类，管理敌人的状态和交互行为
  * 
  * 该类负责敌人的移动、碰撞检测和渲染
  */
-class Enemy {
+class Enemy : public Character {
 public:
     /**
      * @brief 构造函数
@@ -20,11 +19,11 @@ public:
     Enemy();
     
     /**
-     * @brief 析构函数
-     * 释放动画资源
+     * @brief 加载敌人动画资源
+     * 创建向左和向右移动的动画对象
      */
-    ~Enemy();
-
+    virtual void LoadAnimation() override;
+    
     /**
      * @brief 检测与子弹的碰撞
      * @param bullet 子弹对象
@@ -41,18 +40,38 @@ public:
 
     /**
      * @brief 移动敌人朝向玩家
-     * @param player 玩家对象，作为移动目标
+     * @param player 玩家对象作为移动目标
      */
     void Move(const Player& player);
+
+    /**
+     * @brief 更新敌人状态
+     * 目前敌人没有特殊的更新逻辑
+     */
+    virtual void Update() override;
 
     /**
      * @brief 绘制敌人及其阴影
      * @param delta 时间增量(毫秒)，用于动画更新
      */
+    virtual void Draw() override;
+    
+    /**
+     * @brief 绘制敌人及其阴影（带时间参数）
+     * @param delta 时间增量(毫秒)，用于动画更新
+     */
     void Draw(int delta);
 
-    void Hurt(){alive = false; }
+    /**
+     * @brief 敌人受伤
+     * 将敌人标记为死亡
+     */
+    void Hurt() { alive = false; }
 
+    /**
+     * @brief 检查敌人是否存活
+     * @return 敌人存活状态
+     */
     bool CheckAlive() {
         return alive;
     }
@@ -63,15 +82,6 @@ private:
     const int FRAME_HEIGHT = 80;       // 敌人高度
     const int SHADOW_WIDTH = 48;       // 阴影宽度
 
-    IMAGE img_shadow;                  // 阴影图像
-    Animation* anim_left;              // 向左移动的动画
-    Animation* anim_right;             // 向右移动的动画
-    POINT position = { 0, 0 };         // 敌人位置
-    bool facing_left = false;          // 敌人朝向(是否朝左)
-
-    const int WIN_WIDTH = 1280;        // 窗口宽度
-    const int WIN_HEIGHT = 720;        // 窗口高度
-
-    bool alive = true;
+    bool alive = true;                 // 存活状态
 };
 

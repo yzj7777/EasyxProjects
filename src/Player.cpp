@@ -9,11 +9,9 @@
  * @param y 初始y坐标
  */
 Player::Player(int x, int y)
-    : pos{ x, y }, facing_left(true), last_update_time(0)
+    : Character(x, y)
 {
-    // 初始化动画指针为空
-    anim_left = nullptr;
-    anim_right = nullptr;
+    // 初始化在基类中完成
 }
 
 /**
@@ -100,10 +98,10 @@ void Player::Update()
     last_update_time = current_time;
 
     // 根据移动状态更新位置
-    if (is_move_up)    pos.y -= PLAYER_SPEED;  // 向上移动
-    if (is_move_down)  pos.y += PLAYER_SPEED;  // 向下移动
-    if (is_move_left)  pos.x -= PLAYER_SPEED;  // 向左移动
-    if (is_move_right) pos.x += PLAYER_SPEED;  // 向右移动
+    if (is_move_up)    position.y -= PLAYER_SPEED;  // 向上移动
+    if (is_move_down)  position.y += PLAYER_SPEED;  // 向下移动
+    if (is_move_left)  position.x -= PLAYER_SPEED;  // 向左移动
+    if (is_move_right) position.x += PLAYER_SPEED;  // 向右移动
 }
 
 /**
@@ -112,31 +110,31 @@ void Player::Update()
  */
 void Player::Draw()
 {
-
-    int pos_shadow_x = pos.x + (PLAYER_WIDTH / 2 - SHADOW_WIDTH / 2);
-    int pos_shadow_y = pos.y + PLAYER_HEIGHT - 8;
+    int pos_shadow_x = position.x + (PLAYER_WIDTH / 2 - SHADOW_WIDTH / 2);
+    int pos_shadow_y = position.y + PLAYER_HEIGHT - 8;
     putimage_alpha(pos_shadow_x, pos_shadow_y, &img_shadow);
 
     // 计算时间差用于动画更新
     DWORD delta_time = GetTickCount() - last_update_time;
 
-    if (pos.x < 0) pos.x = 0;
-    if (pos.y < 0) pos.y = 0;
-    if (pos.x + PLAYER_WIDTH > WIN_WIDTH) pos.x = WIN_WIDTH - PLAYER_WIDTH;
-    if (pos.y + PLAYER_HEIGHT > WIN_HEIGHT) pos.y = WIN_HEIGHT - PLAYER_HEIGHT;
+    if (position.x < 0) position.x = 0;
+    if (position.y < 0) position.y = 0;
+    if (position.x + PLAYER_WIDTH > WIN_WIDTH) position.x = WIN_WIDTH - PLAYER_WIDTH;
+    if (position.y + PLAYER_HEIGHT > WIN_HEIGHT) position.y = WIN_HEIGHT - PLAYER_HEIGHT;
     
     // 根据朝向选择并播放相应的动画
     if (facing_left)
-        anim_left->Play(pos.x, pos.y, delta_time);
+        anim_left->Play(position.x, position.y, delta_time);
     else
-        anim_right->Play(pos.x, pos.y, delta_time);
+        anim_right->Play(position.x, position.y, delta_time);
 }
 
 /**
  * @brief 获取玩家当前位置
  * @return 玩家坐标
  */
-POINT Player::GetPosition() const
-{
-    return pos;
-}
+// 删除这个函数，因为它已经在基类中定义
+// POINT Player::GetPosition() const
+// {
+//     return pos;
+// }

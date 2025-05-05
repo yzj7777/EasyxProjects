@@ -1,6 +1,10 @@
 #include <graphics.h>
+#include <vector>
+#include <cmath>
 #include "Player.h"
 #include "Enemy.h"
+#include "Character.h"
+#include "Bullet.h"
 
 /**
  * @brief 动画测试程序入口
@@ -8,12 +12,16 @@
  */
 
  // 生成新的敌人
+// 生成新的敌人
 void TryGenerateEnemy(std::vector<Enemy*>& enemy_list)
 {
     const int INTERVAL = 100;
     static int counter = 0;
     if ((++counter) % INTERVAL == 0)
-        enemy_list.push_back(new Enemy());
+    {
+        Enemy* enemy = new Enemy();
+        enemy_list.push_back(enemy);
+    }
 }
 
 // 更新子弹位置
@@ -60,7 +68,7 @@ int main()
     IMAGE img_background;
     loadimage(&img_background, _T("res/img/background.png"));
 
-    int score  = 0;
+    int score = 0;
 
     // 创建玩家对象并初始化
     Player player(500, 500);  // 在坐标(500,500)创建玩家
@@ -122,7 +130,7 @@ int main()
                 if (enemy->CheckBulletCollision(bullet))
                 {
                     enemy->Hurt();
-                    score ++;
+                    score++;
                 }
             }
         }
@@ -145,13 +153,13 @@ int main()
         // 绘制背景
         putimage(0, 0, &img_background);
         
-        // 绘制玩家
+        // 绘制游戏对象
         player.Draw();
         for (Enemy* enemy : enemy_list)
             enemy->Draw(1000/144);
         for (const Bullet& bullet : bullet_list)
             bullet.Draw();
-            DrawPlayerScore(score);
+        DrawPlayerScore(score);
 
         // 将缓冲区内容刷新到屏幕
         FlushBatchDraw();
@@ -167,7 +175,12 @@ int main()
         }
     }
 
-
+    // 释放敌人资源
+    for (Enemy* enemy : enemy_list)
+    {
+        delete enemy;
+    }
+    enemy_list.clear();
 
     // 结束批量绘制
     EndBatchDraw();
